@@ -196,9 +196,6 @@
 		\ifboolKV[EquerreGeom]{Fond}
 			{%
 				\begin{scope} %diff extérieur-intérieur
-					%\fill[draw=none,fill=\EQcouleurfond!10!white,fill opacity=\EQopac,even odd rule]
-					%	(0,0) -- ({\EQlargeur},0) -- (0,{\EQlongueur}) -- cycle
-					%	({0.1*\EQlongueur},{0.1*\EQlongueur}) -- ({\EQlargeur-3/sqrt(3)*0.1*\EQlongueur},{0.1*\EQlongueur}) -- ({0.1*\EQlongueur},{\EQlongueur-0.1*\EQlongueur/(2-sqrt(3))}) -- cycle ;
 					\fill[draw=none,fill=\EQcouleurfond!10!white,fill opacity=\EQopac,even odd rule]
 						(0,0) -- ({\EQlargeur},0) -- (0,{\EQlongueur}) -- cycle
 						({1},{1}) -- ({\EQlargeur-sqrt(3)},{1}) -- ({1},{\EQlongueur-(2+sqrt(3))}) -- cycle ;
@@ -206,7 +203,6 @@
 			}%
 			{}
 		\draw[semithick,\EQcouleur] (0,0) -- ({\EQlargeur},0) -- (0,{\EQlongueur}) -- cycle ; %contour extérieur
-		%\draw[semithick,\EQcouleur] ({0.1*\EQlongueur},{0.1*\EQlongueur}) -- ({\EQlargeur-3/sqrt(3)*0.1*\EQlongueur},{0.1*\EQlongueur}) -- ({0.1*\EQlongueur},{\EQlongueur-0.1*\EQlongueur/(2-sqrt(3))}) -- cycle ; %contour intérieur
 		\draw[semithick,\EQcouleur] ({1},{1}) -- ({\EQlargeur-sqrt(3)},{1}) -- ({1},{\EQlongueur-(2+sqrt(3))}) -- cycle ; %contour intérieur
 		%graduations
 		\begin{scope}
@@ -368,63 +364,6 @@
 	Fond=false,%
 	Opacite=0.5
 }
-
-%\NewDocumentCommand{\tkzRappEquerre}{ O{} }{%
-%	\useKVdefault[RapporteurEquerreGeom]%
-%	\setKV[RapporteurEquerreGeom]{#1}%
-%	\begin{scope}[shift={(\RAPPEQposOrigin)},rotate=\RAPPEQangle,scale=\RAPPEQechelle,every node/.style={rotate=\RAPPEQangle}]
-%		\ifboolKV[RapporteurEquerreGeom]{Ombre}%
-%			{\filldraw[draw=none,fill=\RAPPEQcouleur!10] (-175:5.3) arc (-175:-5:5.3) -- (-5:5) arc (-5:-175:5) -- cycle ;}{}%
-%		%extérieur
-%		\draw[semithick,\RAPPEQcouleur] (-8,0) -- (8,0) -- (0,-8) -- cycle ;
-%		\foreach \x in {-7,-6.9,...,7} {\draw[\RAPPEQcouleur] (\x,0)--(\x,-0.15) ;}
-%		\foreach \x in {-7,-6.5,...,7} {\draw[\RAPPEQcouleur] (\x,0)--(\x,-0.25) ;}
-%		\foreach \x in {-7,-6,...,7} {\draw[\RAPPEQcouleur] (\x,0)--(\x,-0.35) ;}
-%		%grad ext
-%		\foreach \i in {5,6,...,175} {\draw[\RAPPEQcouleur] ({-\i}:4.5)--++({-\i}:2.5pt) ;}
-%		\foreach \i in {5,10,...,175} {\draw[\RAPPEQcouleur] ({-\i}:4.5)--++({-\i}:5pt) ;}
-%		\ifboolKV[RapporteurEquerreGeom]{AfficheValeurs}
-%			{%
-%				\foreach \i in {10,20,...,170} {\draw[\RAPPEQcouleur] ({-\i}:{4.875}) node[rotate={90-\i},scale=\fpeval{\RAPPEQechelle*\RAPPEQechangle},font=\tiny] {\i} ;}
-%				\foreach \i in {10,20,...,170} {\draw[\RAPPEQcouleur] ({-\i}:{5.15}) node[rotate={90-\i},scale=\fpeval{\RAPPEQechelle*\RAPPEQechangle},font=\tiny] {\inteval{180-\i}} ;}
-%			}{}%
-%		\draw[\RAPPEQcouleur,dash pattern=on 0.5cm off 0.15cm] (0,0)--(-135:4.5) ;
-%		\draw[\RAPPEQcouleur,dash pattern=on 0.5cm off 0.15cm] (0,0)--(-45:4.5) ;
-%		\draw[\RAPPEQcouleur] (0,-0.3)--(0,-4.2) ;
-%		\foreach \i in {0.3,0.4,...,3.7} {\draw[\RAPPEQcouleur] (2.1,{-\i})--++(0.2,0) ;}
-%		\foreach \i in {0.3,0.4,...,3.7} {\draw[\RAPPEQcouleur] (-2.1,{-\i})--++(-0.2,0) ;}
-%		\begin{scope}
-%			\clip (-180:4.4) arc (-180:0:4.4) -- cycle ;
-%			\foreach \i in {-0.5,-1,...,-4} {\draw[\RAPPEQcouleur] (0.2,\i)--(1.9,\i) (2.5,\i)--(4.4,\i) ;}
-%			\foreach \i in {-0.5,-1,...,-4} {\draw[\RAPPEQcouleur] (-0.2,\i)--(-1.9,\i) (-2.5,\i)--(-4.4,\i) ;}
-%		\end{scope}
-%		\begin{scope}
-%			\clip (-8,0) -- (8,0) -- (0,-8) -- cycle ;
-%			\foreach \i in {10,20,...,170} {\draw[\RAPPEQcouleur] ({-\i}:5.3)--++({-\i}:3) ;}
-%			\foreach \i in {10,20,...,170} {\draw[\RAPPEQcouleur] ({-\i}:5.3)--++({-\i}:3) ;}
-%		\end{scope}
-%		\begin{scope}
-%			\clip (0,-8)--++(-0.15,0.15)--++(8,8)--++(0.15,-0.15)--cycle ;
-%			\foreach \i in {1,2,...,89} 
-%				{\draw[\RAPPEQcouleur] ({8/(1+tan(\i))},{-8*tan(\i)/(1+tan(\i))}) --++ ({180-\i}:{abs(-0.4*\i/90+0.2)+0.2}) ;}
-%		\end{scope}
-%		\begin{scope}
-%			\clip (0,-8)--++(-0.3,0.3)--++(8,8)--++(0.3,-0.3)--cycle ;
-%			\foreach \i in {5,10,...,85} 
-%				{\draw[\RAPPEQcouleur] ({8/(1+tan(\i))},{-8*tan(\i)/(1+tan(\i))}) --++ ({180-\i}:{abs(-0.7*\i/90+0.35)+0.35}) ;}
-%		\end{scope}
-%		\begin{scope}
-%			\clip (0,-8)--++(0.15,0.15)--++(-8,8)--++(-0.15,-0.15)--cycle ;
-%			\foreach \i in {1,2,...,89} 
-%				{\draw[\RAPPEQcouleur] ({-8/(1+tan(\i))},{-8*tan(\i)/(1+tan(\i))}) --++ ({\i}:{abs(-0.4*\i/90+0.2)+0.2}) ;}
-%		\end{scope}
-%		\begin{scope}
-%			\clip (0,-8)--++(0.3,0.3)--++(-8,8)--++(-0.3,-0.3)--cycle ;
-%			\foreach \i in {5,10,...,85} 
-%				{\draw[\RAPPEQcouleur] ({-8/(1+tan(\i))},{-8*tan(\i)/(1+tan(\i))}) --++ ({\i}:{abs(-0.7*\i/90+0.35)+0.35}) ;}
-%		\end{scope}
-%	\end{scope}
-%}
 
 \NewDocumentCommand{\tkzRappEquerre}{ O{} }{%
 	\useKVdefault[RapporteurEquerreGeom]%
