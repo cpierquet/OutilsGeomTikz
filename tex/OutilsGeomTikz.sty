@@ -2,7 +2,8 @@
 % licence........: Released under the LaTeX Project Public License v1.3c or later, see http://www.latex-project.org/lppl.txtf
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{OutilsGeomTikz}[2023/03/02 v0.1.0 Outils géométriques en TikZ]
+\ProvidesPackage{OutilsGeomTikz}[2023/03/07 v0.1.1 Outils geometriques en TikZ]
+% 0.1.1		Correction d'un bug avec une ancienne syntaxe [join=...]
 % 0.1.0		Version initiale
 
 %------Packages utiles
@@ -523,9 +524,9 @@
 	\pgfmathsetmacro{\AngleCP}{asin(\MaLongueurTmp/(\COMPASunittikz*\COMPASechelle*2*\COMPASLLB))}
 	%retour aux affaires
 	\ifboolKV[CompasGeom]{Retourne}
-	{\def\CoeffYscale{-1}}{\def\CoeffYscale{1}}
+		{\def\CoeffYscale{-1}}{\def\CoeffYscale{1}}
 	\begin{scope}[shift=(#3),scale=\COMPASechelle]
-		\begin{scope}[join=round,rotate=\MonAngleTmp,yscale=\CoeffYscale,shift=(270-\AngleCP:-\COMPASLLB)]
+		\begin{scope}[line join=round,rotate=\MonAngleTmp,yscale=\CoeffYscale,shift=(270-\AngleCP:-\COMPASLLB)]
 			% branche pointe sèche
 			\draw[rotate=-\AngleCP,fill=\COMPAScouleur!80] (0,0)--(0,-\COMPASLLB)--(-.2,-\COMPASLLB+.8)--(-.2,0)--cycle ;
 			\draw[rotate=-\AngleCP,fill=\COMPAScouleur!05] (0,-\COMPASLLB+.8)--(0,-\COMPASLLB)--(-.2,-\COMPASLLB+.8)--cycle ;
