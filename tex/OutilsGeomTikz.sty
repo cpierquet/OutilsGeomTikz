@@ -2,7 +2,8 @@
 % licence........: Released under the LaTeX Project Public License v1.3c or later, see http://www.latex-project.org/lppl.txtf
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{OutilsGeomTikz}[2023/03/07 v0.1.1 Outils geometriques en TikZ]
+\ProvidesPackage{OutilsGeomTikz}[2023/05/22 v0.1.2 Outils geometriques en TikZ]
+% 0.1.2		Ajout de la règle-repère
 % 0.1.1		Correction d'un bug avec une ancienne syntaxe [join=...]
 % 0.1.0		Version initiale
 
@@ -102,6 +103,70 @@
 					{\foreach \i in {0,1,...,\REGLlongueur} \draw[\REGLcouleur] (\i,{-\REGLlargeur+0.5}) node[inner sep=1pt,outer sep=1pt,rotate=\REGLangle,scale={0.8*\REGLechelle},font=\small,above] {\rotatebox{180}{$\fpeval{trunc(\REGLlongueur)-\i}$}} ;}
 					{}
 			}%
+			{}%
+	\end{scope}
+}
+
+%--------Règle-Repère (OK)
+\defKV[RegleRepereGeom]{%
+	Echelle=\def\REGLREPechelle{#1},%
+	Longueur=\def\REGLREPlongueur{#1},%
+	Largeur=\def\REGLREPlargeur{#1},%
+	Couleur=\def\REGLREPcouleur{#1},%
+	CouleurFond=\def\REGLREPcouleurfond{#1},%
+	Origine=\def\REGLREPposOrigin{#1},%
+	Rotation=\def\REGLREPangle{#1},%
+	Opacite=\def\REGLREPopac{#1}
+}
+
+\setKVdefault[RegleRepereGeom]{%
+	Echelle=1,%
+	Couleur=black,%
+	CouleurFond=black,%
+	Longueur=12,%
+	Largeur=4,%
+	Origine={(0,0)},%
+	Rotation=0,%
+	AfficheValeurs=true,%
+	Fond=false,%
+	Opacite=0.5,%
+	Retourne=false
+}
+
+\NewDocumentCommand{\tkzRegleRepere}{ O{} }{%
+	\useKVdefault[RegleRepereGeom]%
+	\setKV[RegleRepereGeom]{#1}%
+	\xdef\REGLREPlongueur{\fpeval{max(4,2*round(0.5*\REGLREPlongueur,0))}}%valeurs mini
+	\xdef\REGLREPlargeur{\fpeval{max(4,round(\REGLREPlargeur,0))}}
+	\begin{scope}[shift={(\REGLREPposOrigin)},rotate=\REGLREPangle,scale=\REGLREPechelle]
+		%bases de la règle-repère
+		\ifboolKV[RegleRepereGeom]{Fond}%
+			{\draw[draw=none,fill=\REGLREPcouleurfond!10!white,fill opacity=\REGLREPopac,rounded corners] (-0.5,0) rectangle++ ({\REGLREPlongueur+1},{-\REGLREPlargeur}) ;}%
+			{}%
+		\draw[semithick,draw=\REGLREPcouleur,rounded corners] (-0.5,0) rectangle++ ({\REGLREPlongueur+1},{-\REGLREPlargeur}) ;
+			\clip (-0.5,0) rectangle++ ({\REGLREPlongueur+1},{-\REGLREPlargeur}) ;
+			\draw[\REGLREPcouleur,densely dotted,xstep=0.2,ystep=0.2] ({-0.5},{-\REGLREPlargeur+1}) grid ({\REGLREPlongueur+1},{-1}) ;
+			\draw[\REGLREPcouleur] ({-0.5},{-\REGLREPlargeur+1}) grid ({\REGLREPlongueur+1},{-1}) ;
+		%graduations
+		\foreach \x in {0,0.1,...,\REGLREPlongueur}
+			{\draw[\REGLREPcouleur] (\x,0)--++(0,-0.25) (\x,{-\REGLREPlargeur})--++(0,0.25) ;}
+		\foreach \x in {0,0.5,...,\REGLREPlongueur}
+			{\draw[\REGLREPcouleur] (\x,0)--++(0,-0.375) (\x,{-\REGLREPlargeur})--++(0,0.375) ;}
+		\foreach \x in {0,1,...,\REGLREPlongueur}
+			{\draw[\REGLREPcouleur] (\x,0)--++(0,-0.5) (\x,{-\REGLREPlargeur})--++(0,0.5) ;}
+		%valeurs
+		\ifboolKV[RegleRepereGeom]{AfficheValeurs}%
+			{%
+				\ifboolKV[RegleRepereGeom]{Retourne}%
+					{%
+						{\foreach \i in {0,1,...,\REGLREPlongueur} \draw[\REGLREPcouleur] (\i,{-0.5}) node[inner sep=1pt,outer sep=1pt,rotate=\REGLREPangle,scale={0.8*\REGLREPechelle},font=\small,below] {$\fpeval{-trunc(0.5*\REGLREPlongueur)+\i}$} ;}
+						{\foreach \i in {0,1,...,\REGLREPlongueur} \draw[\REGLREPcouleur] (\i,{-\REGLREPlargeur+0.5}) node[inner sep=1pt,outer sep=1pt,rotate=\REGLREPangle,scale={0.8*\REGLREPechelle},font=\small,above] {\rotatebox{180}{$\inteval{\REGLREPlongueur-\i}$}} ;}
+					}%
+					{%
+						{\foreach \i in {0,1,...,\REGLREPlongueur} \draw[\REGLREPcouleur] (\i,{-0.5}) node[inner sep=1pt,outer sep=1pt,rotate=\REGLREPangle,scale={0.8*\REGLREPechelle},font=\small,below] {$\i$} ;}
+						{\foreach \i in {0,1,...,\REGLREPlongueur} \draw[\REGLREPcouleur] (\i,{-\REGLREPlargeur+0.5}) node[inner sep=1pt,outer sep=1pt,rotate=\REGLREPangle,scale={0.8*\REGLREPechelle},font=\small,above] {\rotatebox{180}{$\fpeval{trunc(0.5*\REGLREPlongueur)-\i}$}} ;}
+					}%
+			}
 			{}%
 	\end{scope}
 }

@@ -4,8 +4,8 @@
 
 \documentclass[french,a4paper,11pt]{article}
 \usepackage[margin=2cm,includefoot]{geometry}
-\def\TPversion{0.1.1}
-\def\TPdate{07 Mars 2023}
+\def\TPversion{0.1.2}
+\def\TPdate{22 mai 2023}
 \usepackage[table,svgnames]{xcolor}
 \usepackage[bold-style=ISO,math-style=french]{concmath-otf}
 %\usepackage[bold-style=ISO,math-style=french]{unicode-math}
@@ -202,6 +202,8 @@
 
 \part{Historique}
 
+\verb|v0.1.2|~:~~~~Ajout de la \textit{règle-repère}
+
 \verb|v0.1.1|~:~~~~Correction d'un bug avec une ancienne syntaxe [join=...]
 
 \verb|v0.1.0|~:~~~~Version initiale.
@@ -225,6 +227,7 @@ Le package \textsf{OutilsGeomTikz} \textit{propose} des éléments graphiques, e
 	\item une équerre graduée (30/60) ;
 	\item un rapporteur (180 ou 360);
 	\item une réquerre graduée ;
+	\item une \og règle-repère \fg{} graduée ;
 	\item une \og rappéquerre \fg{} graduée ;
 	\item un compas.
 \end{itemize}
@@ -303,6 +306,7 @@ Les outils disponibles sont à insérer dans un environnement \TikZ, et pour le 
 	\item \texttt{\textbackslash tkzRapporteur} ;
 	\item \texttt{\textbackslash tkzRequerre} ;
 	\item \texttt{\textbackslash tkzRappequerre} ;
+	\item \texttt{\textbackslash tkzRegleRepere} ;
 	\item \texttt{\textbackslash tkzCompas} ;
 	\item \texttt{\textbackslash tkzCrayon}.
 \end{itemize}
@@ -315,6 +319,7 @@ Les outils disponibles sont à insérer dans un environnement \TikZ, et pour le 
 \tkzRapporteur[clés]
 \tkzRequerre[clés]
 \tkzRappEquerre[clés]
+\tkzRegleRepere[clés]
 \tkzCrayon[clés]
 \tkzCompas[clés]{pointe}{mine}
 \end{PresentationCode}
@@ -452,6 +457,72 @@ Toutes les \Cle{clés} ne seront pas présentées de manière indépendante, mai
 	\tkzRegle[Fond,CouleurFond=red]
 	\tkzRegle[Longueur=13,Largeur=2,Rotation=-45,Couleur=ForestGreen,Origine={(1,-3)},Fond,PosVal=hb]
 	\tkzRegle[Largeur=1.25,Longueur=9,Couleur=blue,Rotation=20,Origine={(0,3)},AfficheValeurs=false]
+\end{tikzpicture}
+\end{PresentationCode}
+
+\pagebreak
+
+\section{La règle-repère}
+
+\subsection{La commande}
+
+\begin{cautionblock}
+Le package propose l'outil \textsf{Règle repère}.
+
+La forme générale de la règle-repère est \textit{fixée}, mais la règle-repère peut être \textit{personnalisée}.
+\end{cautionblock}
+
+\begin{PresentationCode}{tikz lower}
+\tkzRegleRepere
+\end{PresentationCode}
+
+\subsection{Clés et options}
+%
+\begin{tipblock}
+Quelques \Cle{clés} de personnalisation sont disponibles :
+
+\begin{itemize}
+	\item \Cle{Longueur} pour la taille (\textit{paire}), en cm, de la règle-repère ;\hfill~(défaut : \Cle{12} et mini \Cle{4})
+	\item \Cle{Largeur} pour la largeur, en cm, de la règle-repère ;\hfill~(défaut : \Cle{4} et mini \Cle{4})
+	\item \Cle{Origine} pour le placer la règle-repère (au niveau du $0$) ;\hfill~(défaut : \Cle{\{(0,0)\}})
+	\item \Cle{Rotation} pour pivoter la règle-repère (au niveau du $0$) ;\hfill~(défaut : \Cle{0})
+	\item \Cle{Echelle} pour l'échelle globale de la règle-repère ;\hfill~(défaut : \Cle{1})
+	\item \Cle{Couleur} pour la couleur des éléments de la règle-repère ;\hfill~(défaut : \Cle{black})
+	\item le booléen \Cle{Fond} pour afficher une couleur de fond pour la règle-repère ;
+	
+	\hfill~(défaut : \Cle{false})
+	\item \Cle{CouleurFond} pour la couleur du fond de la règle-repère ;\hfill~(défaut : \Cle{black})
+	\item \Cle{Opacite} pour régler l'opacité du fond de la règle-repère ;\hfill~(défaut : \Cle{0.5})
+	\item le booléen \Cle{AfficheValeurs} pour afficher les valeurs des graduations ;\hfill~(défaut : \Cle{true})
+	\item le booléen \Cle{Retourne} pour \textit{inverser la position des graduations}.
+	
+	\hfill~(défaut : \Cle{false})
+\end{itemize}
+\vspace*{-\baselineskip}\leavevmode
+\end{tipblock}
+
+\begin{noteblock}
+Pour des exemples de personnalisation, une grille ainsi que les points \textit{support} seront rajoutés.
+
+\smallskip
+
+Toutes les \Cle{clés} ne seront pas présentées de manière indépendante, mais parfois elles seront \textit{cumulées} pour éviter de surcharger la sortie.
+\end{noteblock}
+
+\begin{PresentationCode}{listing only}
+%environnement tikz
+\tkzRegleRepere[Fond,CouleurFond=red]
+\tkzRegleRepere[Longueur=8,Rotation=-15,Couleur=ForestGreen, Origine={(1,-5)},Fond,AfficheValeurs=false]
+\tkzRegleRepere[Longueur=18,Echelle=0.5,Couleur=blue,Rotation=20, Origine={(3,3.25)},Retourne]
+\end{PresentationCode}
+
+\begin{PresentationCode}{text only}
+\begin{tikzpicture}
+	\affichegrille{-1}{13}{-12}{7}
+	\pointsutiles{(0,0),(1,-5),(3,3.25)}
+	\tkzRegleRepere[Fond,CouleurFond=red]
+	\tkzRegleRepere[Longueur=8,Rotation=-15,Couleur=ForestGreen, Origine={(1,-5)},Fond,AfficheValeurs=false]
+	\tkzRegleRepere[Longueur=18,Echelle=0.5,Couleur=blue,Rotation=20,Origine={(3,3.25)},Retourne]
 \end{tikzpicture}
 \end{PresentationCode}
 
@@ -766,12 +837,13 @@ Quelques \Cle{clés} de personnalisation sont disponibles :
 \tkzCrayon[Couleur=orange,Origine={AA},Rotation=-20,Echelle=0.5,Longueur=6]
 \tkzRequerre[Fond,AfficheValeurs,CouleurFond=yellow,Origine={(3,-3.5)}, Rotation=-30,Echelle=0.5]
 \tkzCrayon[Couleur=gray,Origine={(3,-3)},Rotation=-98,Echelle=0.5]
+\tkzRegleRepere[Fond,CouleurFond=yellow,AfficheValeurs=false,Echelle=0.5, Origine={(1,5)},Longueur=8]
 \coordinate (FG) at (-1,1) ; \coordinate (FH) at (1,1.5) ;
 \tkzCompas[LongueurBranches=3,LongueurCrayon=2]{FG}{FH}
 \end{PresentationCode}
 
 \begin{PresentationCode}{text only}
-\begin{tikzpicture}
+\begin{tikzpicture}[scale=0.9]
 	\affichegrille{-2}{13}{-8}{5}
 	%\pointsutiles{(0,0),(2,1),(-4,-5),(-1,-5),(5,-2),(8,-3),(8.5,6),(8.5,2.5)}
 	\tkzRegle[Fond,Longueur=8,Rotation=-20,CouleurFond=blue]
@@ -786,6 +858,8 @@ Quelques \Cle{clés} de personnalisation sont disponibles :
 	\tkzCrayon[Couleur=orange,Origine={AA},Rotation=-20,Longueur=6,Echelle=0.5]
 	\tkzRequerre[Fond,AfficheValeurs,CouleurFond=yellow,Origine={(3,-3.5)},Rotation=-30,Longueur=7,Largeur=2.5]
 	\tkzCrayon[Couleur=gray,Origine={(3,-3.5)},Rotation=-98,Longueur=3]
+	\tkzRegleRepere[Fond,CouleurFond=yellow,AfficheValeurs=false,Echelle=0.5,Origine={(1,5)},Longueur=8]
+	\tkzCrayon[Couleur=pink,Origine={(2,3)},Rotation=-135,Longueur=2.75]
 	%compas
 	\coordinate (FG) at (-1,1) ; \coordinate (FH) at (1,1.5) ;
 	\tkzCompas[LongueurBranches=3,LongueurCrayon=2]{FG}{FH}
