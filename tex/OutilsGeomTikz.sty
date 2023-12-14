@@ -2,7 +2,10 @@
 % licence........: Released under the LaTeX Project Public License v1.3c or later, see http://www.latex-project.org/lppl.txtf
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{OutilsGeomTikz}[2023/05/22 v0.1.2 Outils geometriques en TikZ]
+\ProvidesPackage{OutilsGeomTikz}[2023/12/13 v0.1.5 Outils geometriques en TikZ]
+% 0.1.5		Modification de la graduation intérieure pour les rapporteurs 180°
+% 0.1.4		Possibilité de positionner les outils avec deux points (angle calculé automatiquement)
+% 0.1.3		Ajout du pourcenteur
 % 0.1.2		Ajout de la règle-repère
 % 0.1.1		Correction d'un bug avec une ancienne syntaxe [join=...]
 % 0.1.0		Version initiale
@@ -12,6 +15,7 @@
 \RequirePackage{simplekv}
 \RequirePackage{xstring}
 \RequirePackage{nicefrac}
+%\RequirePackage{tkz-euclide}
 %librairies tikz
 \usetikzlibrary{calc,positioning}
 
@@ -53,7 +57,7 @@
 	Largeur=\def\REGLlargeur{#1},%
 	Couleur=\def\REGLcouleur{#1},%
 	CouleurFond=\def\REGLcouleurfond{#1},%
-	Origine=\def\REGLposOrigin{#1},%
+	Origine=\xdef\REGLposOrigin{#1},%
 	Rotation=\def\REGLangle{#1},%
 	Opacite=\def\REGLopac{#1},%
 	PosVal=\def\REGLposval{#1}
@@ -76,6 +80,12 @@
 \NewDocumentCommand{\tkzRegle}{ O{} }{%
 	\useKVdefault[RegleGeom]%
 	\setKV[RegleGeom]{#1}%
+	\IfSubStr{\REGLangle}{auto/}%
+		{%
+			\StrBehind{\REGLangle}{/}[\tmppointdeux]%
+			\pgfmathanglebetweenpoints{\pgfpointanchor{\REGLposOrigin}{center}}{\pgfpointanchor{\tmppointdeux}{center}}%
+			\edef\REGLangle{\pgfmathresult}%
+		}{}%
 	\xdef\REGLlongueur{\fpeval{max(3,\REGLlongueur)}}%valeurs mini
 	\xdef\REGLlargeur{\fpeval{max(1.5,\REGLlargeur)}}
 	\begin{scope}[shift={(\REGLposOrigin)},rotate=\REGLangle,scale=\REGLechelle]
@@ -137,7 +147,13 @@
 	\useKVdefault[RegleRepereGeom]%
 	\setKV[RegleRepereGeom]{#1}%
 	\xdef\REGLREPlongueur{\fpeval{max(4,2*round(0.5*\REGLREPlongueur,0))}}%valeurs mini
-	\xdef\REGLREPlargeur{\fpeval{max(4,round(\REGLREPlargeur,0))}}
+	\xdef\REGLREPlargeur{\fpeval{max(4,round(\REGLREPlargeur,0))}}%
+	\IfSubStr{\REGLREPangle}{auto/}%
+		{%
+			\StrBehind{\REGLREPangle}{/}[\tmppointdeux]%
+			\pgfmathanglebetweenpoints{\pgfpointanchor{\REGLREPposOrigin}{center}}{\pgfpointanchor{\tmppointdeux}{center}}%
+			\edef\REGLREPangle{\pgfmathresult}%
+		}{}%
 	\begin{scope}[shift={(\REGLREPposOrigin)},rotate=\REGLREPangle,scale=\REGLREPechelle]
 		%bases de la règle-repère
 		\ifboolKV[RegleRepereGeom]{Fond}%
@@ -200,7 +216,13 @@
 	\useKVdefault[RequerreGeom]%
 	\setKV[RequerreGeom]{#1}%
 	\xdef\REQlongueur{\fpeval{max(6,\REQlongueur)}}%valeurs mini
-	\xdef\REQlargeur{\fpeval{max(1.5,\REQlargeur)}}
+	\xdef\REQlargeur{\fpeval{max(1.5,\REQlargeur)}}%
+	\IfSubStr{\REQangle}{auto/}%
+		{%
+			\StrBehind{\REQangle}{/}[\tmppointdeux]%
+			\pgfmathanglebetweenpoints{\pgfpointanchor{\REQposOrigin}{center}}{\pgfpointanchor{\tmppointdeux}{center}}%
+			\edef\REQangle{\pgfmathresult}%
+		}{}%
 	\begin{scope}[shift={(\REQposOrigin)},rotate=\REQangle,scale=\REQechelle]
 		\ifboolKV[RequerreGeom]{Fond}
 			{
@@ -250,14 +272,27 @@
 	Rotation=0,%
 	AfficheValeurs=true,%
 	Fond=false,%
-	Opacite=0.5
+	Opacite=0.5,%
+	PetitCote=false
 }
 
 \NewDocumentCommand{\tkzEquerre}{ O{} }{%
 	\useKVdefault[EquerreGeom]%
 	\setKV[EquerreGeom]{#1}%
 	\xdef\EQlongueur{\fpeval{max(4.5,\EQlongueur)}}%valeurs mini
-	\def\EQlargeur{\fpeval{\EQlongueur*tand(30)}}
+	\def\EQlargeur{\fpeval{\EQlongueur*tand(30)}}%
+	\IfSubStr{\EQangle}{auto/}%
+		{%
+			\StrBehind{\EQangle}{/}[\tmppointdeux]%
+			\pgfmathanglebetweenpoints{\pgfpointanchor{\EQposOrigin}{center}}{\pgfpointanchor{\tmppointdeux}{center}}%
+			\ifboolKV[EquerreGeom]{PetitCote}%
+				{%
+					\edef\EQangle{\pgfmathresult}%
+				}%
+				{%
+					\edef\EQangle{\fpeval{\pgfmathresult-90}}%
+				}%
+		}{}%
 	\begin{scope}[shift={(\EQposOrigin)},rotate=\EQangle,scale=\EQechelle]
 		\ifboolKV[EquerreGeom]{Fond}
 			{%
@@ -314,7 +349,8 @@
 	AfficheAngles=true,%
 	Fond=false,%
 	Opacite=0.5,%
-	Complet=false
+	Complet=false,%
+	GraduationsInt=false
 }
 
 \NewDocumentCommand{\tkzRapporteur}{ O{} }{%
@@ -390,8 +426,16 @@
 				\foreach \i in {0,5,...,180} {\draw[\RAPPcouleur] (\i:3.75)--(\i:3.45) ;}
 				\foreach \i in {0,10,...,180} {\draw[\RAPPcouleur] (\i:3.75)--(\i:3.35) ;}
 				%grad int
-				\foreach \i in {0,5,...,180} {\draw[\RAPPcouleur] (\i:2.25)--(\i:2.4) ;}
-				\foreach \i in {0,10,...,180} {\draw[\RAPPcouleur] (\i:2.25)--(\i:2.55) ;}
+				\ifboolKV[RapporteurGeom]{GraduationsInt}%
+					{%
+						\foreach \i in {0,1,...,180} {\draw[\RAPPcouleur] (\i:2.25)--(\i:2.4) ;}
+						\foreach \i in {0,5,...,180} {\draw[\RAPPcouleur] (\i:2.25)--(\i:2.475) ;}
+						\foreach \i in {0,10,...,180} {\draw[\RAPPcouleur] (\i:2.25)--(\i:2.55) ;}
+					}%
+					{%
+						\foreach \i in {0,5,...,180} {\draw[\RAPPcouleur] (\i:2.25)--(\i:2.45) ;}
+						\foreach \i in {0,10,...,180} {\draw[\RAPPcouleur] (\i:2.25)--(\i:2.55) ;}
+					}%
 				%valeurs si booléen
 				\ifboolKV[RapporteurGeom]{AfficheAngles}
 					{%
@@ -401,6 +445,82 @@
 							{\draw[\RAPPcouleur] (\i:2.7) node[rotate={\i-90},scale=\fpeval{\RAPPechelle*\RAPPechangle},font=\tiny] {\inteval{180-\i}} ;}
 					}{}
 			}
+	\end{scope}
+}
+
+\defKV[Pourcenteur]{%
+	Echelle=\def\POURCechelle{#1},%
+	EchelleAngle=\def\POURCechangle{#1},%
+	Couleur=\def\POURCcouleur{#1},%
+	CouleurFond=\def\POURCcouleurfond{#1},%
+	Origine=\def\POURCposOrigin{#1},%
+	Rotation=\def\POURCangle{#1},%
+	Opacite=\def\POURCopac{#1}
+}
+
+\setKVdefault[Pourcenteur]{%
+	Echelle=1,%
+	EchelleAngle=1,%
+	Couleur=black,%
+	CouleurFond=black,%
+	Origine={(0,0)},%
+	Rotation=0,%
+	AfficheValeurs=true,%
+	Fond=false,%
+	Opacite=0.5,%
+	Decoration=true
+}
+
+\NewDocumentCommand{\tkzPourcenteur}{ O{} }{%
+	\useKVdefault[Pourcenteur]%
+	\setKV[Pourcenteur]{#1}%
+	\begin{scope}[shift={(\POURCposOrigin)},rotate=\POURCangle,scale=\POURCechelle,every node/.style={rotate=\POURCangle}]
+	\ifboolKV[Pourcenteur]{Fond}
+		{%
+			\fill[draw=none,fill=\POURCcouleurfond!10!white,fill opacity=\POURCopac] (0,0) circle[radius=3] ;
+		}%
+		{}%
+		\draw[\POURCcouleur,semithick] (0,0) circle[radius=3] ;
+		\draw[\POURCcouleur,semithick] ({-0.15*3},0)--({0.15*3},0) (0,{-0.15*3})--(0,{0.15*3}) ;
+		\foreach \pct in {0,1,...,199}
+		{\draw[\POURCcouleur,thin] ({0.5*\pct*3.6}:{3})--({0.5*\pct*3.6}:{3-0.2}) ;}
+		\foreach \pct in {0,10,...,90}{%
+			\draw[\POURCcouleur,thin] ({(\pct+1)*3.6}:{3})--({(\pct+1)*3.6}:{3-0.35}) ;
+			\filldraw[\POURCcouleur] ({(\pct+1)*3.6}:{3-0.35}) circle[fill=\POURCcouleur,radius=0.75pt] ;
+			\draw[\POURCcouleur,thin] ({(\pct+2)*3.6}:{3})--({(\pct+2)*3.6}:{3-0.35}) ;
+			\filldraw[\POURCcouleur] ({(\pct+2)*3.6}:{3-0.35}) circle[fill=\POURCcouleur,radius=0.75pt] ;
+			\draw[\POURCcouleur,thin] ({(\pct+3)*3.6}:{3})--({(\pct+3)*3.6}:{3-0.35}) ;
+			\filldraw[\POURCcouleur] ({(\pct+3)*3.6}:{3-0.35}) circle[fill=\POURCcouleur,radius=0.75pt] ;
+			\draw[\POURCcouleur,thin] ({(\pct+4)*3.6}:{3})--({(\pct+4)*3.6}:{3-0.35}) ;
+			\filldraw[\POURCcouleur] ({(\pct+4)*3.6}:{3-0.35}) circle[fill=\POURCcouleur,radius=0.75pt] ;
+			\draw[\POURCcouleur,thin] ({(\pct+6)*3.6}:{3})--({(\pct+6)*3.6}:{3-0.35}) ;
+			\filldraw[\POURCcouleur] ({(\pct+6)*3.6}:{3-0.35}) circle[fill=\POURCcouleur,radius=0.75pt] ;
+			\draw[\POURCcouleur,thin] ({(\pct+7)*3.6}:{3})--({(\pct+7)*3.6}:{3-0.35}) ;
+			\filldraw[\POURCcouleur] ({(\pct+7)*3.6}:{3-0.35}) circle[fill=\POURCcouleur,radius=0.75pt] ;
+			\draw[\POURCcouleur,thin] ({(\pct+8)*3.6}:{3})--({(\pct+8)*3.6}:{3-0.35}) ;
+			\filldraw[\POURCcouleur] ({(\pct+8)*3.6}:{3-0.35}) circle[fill=\POURCcouleur,radius=0.75pt] ;
+			\draw[\POURCcouleur,thin] ({(\pct+9)*3.6}:{3})--({(\pct+9)*3.6}:{3-0.35}) ;
+			\filldraw[\POURCcouleur] ({(\pct+9)*3.6}:{3-0.35}) circle[fill=\POURCcouleur,radius=0.75pt] ;
+		}
+		\foreach \pct in {5,10,15,20,30,35,40,45,55,60,65,70,80,85,90,95}{%
+			\draw[\POURCcouleur,semithick] ({\pct*3.6}:{3})--({\pct*3.6}:{3-0.5}) ;
+			\ifboolKV[Pourcenteur]{AfficheValeurs}
+				{\draw ({-\pct*3.6+90}:{3-0.6}) node[\POURCcouleur,rotate={-3.6*\pct},scale=\fpeval{0.8*\POURCechelle*\POURCechangle},font=\tiny] {\pct\,\%} ;}{}
+		}
+		\foreach \pct in {0,25,50,75}{%
+			\draw[\POURCcouleur,semithick] ({\pct*3.6}:{3})--({\pct*3.6}:{3-0.5}) ;
+			\ifboolKV[Pourcenteur]{AfficheValeurs}
+				{%
+					\draw ({-\pct*3.6+90}:{3-0.61}) node[\POURCcouleur,rotate={-3.6*\pct},scale=\fpeval{0.8*\POURCechelle*\POURCechangle},font=\scriptsize\bfseries] {\pct\,\%} ;
+					\draw ({-\pct*3.6+90}:{2+0.15}) node[\POURCcouleur,rotate={-3.6*\pct},scale=\fpeval{0.8*\POURCechelle*\POURCechangle},font=\tiny\bfseries] {\pct\,\%} ;
+				}{}%
+		}
+		\draw[\POURCcouleur,semithick] (0,1)--(0,2) (1.6,0)--(2,0) (0,-1.6)--(0,-2) (-1.6,0)--(-2,0) ;
+		\ifboolKV[Pourcenteur]{Decoration}
+			{%
+				\foreach \arccc in {0.8,0.9,...,1.9} {\draw[\POURCcouleur] (0,\arccc) arc (90:47:\arccc) ;}
+			}%
+			{}%
 	\end{scope}
 }
 
@@ -435,6 +555,12 @@
 	\useKVdefault[RapporteurEquerreGeom]%
 	\setKV[RapporteurEquerreGeom]{#1}%
 	\xdef\RAPPEQlargeur{\fpeval{max(3,\RAPPEQlargeur)}}%valeurs mini
+	\IfSubStr{\RAPPEQangle}{auto/}%
+		{%
+			\StrBehind{\RAPPEQangle}{/}[\tmppointdeux]%
+			\pgfmathanglebetweenpoints{\pgfpointanchor{\RAPPEQposOrigin}{center}}{\pgfpointanchor{\tmppointdeux}{center}}%
+			\edef\RAPPEQangle{\pgfmathresult}%
+		}{}%
 	\begin{scope}[shift={(\RAPPEQposOrigin)},rotate=\RAPPEQangle,scale=\RAPPEQechelle,every node/.style={rotate=\RAPPEQangle}]
 		%fond
 		\ifboolKV[RapporteurEquerreGeom]{Fond}
